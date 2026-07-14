@@ -6,10 +6,12 @@ Homebrew distribution for the signed and Apple-notarized TraceFence macOS local 
 
 ```bash
 brew tap AI-Scarlett/tap
+# Homebrew 6 and later require explicit trust for third-party casks.
+brew trust --cask AI-Scarlett/tap/tracefence
 brew install --cask tracefence
 ```
 
-TraceFence requires an Apple Silicon Mac running macOS 13 or later.
+TraceFence requires an Apple Silicon Mac running macOS 13 or later. Homebrew versions before 6 can skip the `brew trust` line.
 
 ## Upgrade
 

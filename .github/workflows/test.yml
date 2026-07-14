@@ -1,0 +1,43 @@
+name: Test TraceFence cask
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Style cask
+        run: brew style Casks/tracefence.rb
+
+      - name: Tap and trust cask
+        run: |
+          brew tap AI-Scarlett/tap
+          if brew help trust >/dev/null 2>&1; then
+            brew trust --cask AI-Scarlett/tap/tracefence
+          fi
+
+      - name: Audit cask
+        run: brew audit --cask --strict tracefence
+
+      - name: Install and verify notarized app
+        run: |
+          test_dir="${RUNNER_TEMP}/tracefence-apps"
+          expected_version="$(ruby -ne 'puts $1 if $_ =~ /^  version "([^"]+)"/' Casks/tracefence.rb)"
+          mkdir -p "${test_dir}"
+          brew install --cask --appdir="${test_dir}" tracefence
+          codesign --verify --deep --strict --verbose=2 "${test_dir}/TraceFence.app"
+          spctl --assess --type execute --verbose=4 "${test_dir}/TraceFence.app"
+          version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "${test_dir}/TraceFence.app/Contents/Info.plist")"
+          test -n "${expected_version}"
+          test "${version}" = "${expected_version}"
+
+      - name: Uninstall cask
+        if: always()
+        run: brew uninstall --cask tracefence || true
