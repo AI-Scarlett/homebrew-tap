@@ -1,6 +1,6 @@
 cask "tracefence" do
-  version "1.1.4"
-  sha256 "ee8c7542a07e5f4c55fc653f51e4d523f7905e778179b77ef6b44bd376bac8e8"
+  version "1.1.6"
+  sha256 "1c1f94058a366fffe9f767e0bffaac80b04f519186c07e947801f68fde653603"
 
   url "https://github.com/AI-Scarlett/TraceFence/releases/download/v#{version}/TraceFence-v#{version}-arm64.dmg",
       verified: "github.com/AI-Scarlett/TraceFence/"
